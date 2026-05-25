@@ -1,0 +1,25 @@
+[project]
+name = "cinema_reservation_system"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "cassandra-driver",
+    "tornado",
+    "asyncio",
+    "httpx"
+]
+
+[build-system]
+requires = ["uv_build>=0.9.26,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = ["app", "tests"]
+
+
+[project.scripts]
+client = "app.client:main"
+server = "app.server:entrypoint"
+setup = "app.setup:setup"
+tests = "tests.stress_tests:main"
