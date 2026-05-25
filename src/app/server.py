@@ -1,10 +1,13 @@
-import tornado
 import asyncio
 import json
-from cluster import connect_to_cluster
-from cassandra.cluster import BatchStatement
-from uuid import uuid4, UUID
+from uuid import UUID, uuid4
 
+import tornado
+from cassandra.cluster import BatchStatement
+
+from app.cluster import connect_to_cluster
+
+session = None
 
 select_reservations_by_screening = "SELECT * FROM reservations WHERE screening_id=%s;"
 select_reservations_by_email = "SELECT * FROM reservations_by_user WHERE user_email=%s;"
@@ -100,6 +103,7 @@ class MainHandler(tornado.web.RequestHandler):
                         "time": row.screening_time.isoformat(),
                         "screening_id": str(row.screening_id),
                         "room": row.room_number,
+                        "total_seats": row.total_seats,
                     }
                     for row in res
                 ],
@@ -126,16 +130,10 @@ class MainHandler(tornado.web.RequestHandler):
 
         try:
             screening_id = UUID(screening_id)
-        except ValueError:
-            self.set_status(400)
-            self.write(json.dumps({"error": "Invalid screening_id format"}))
-            return
-
-        try:
             seat_number = int(seat_number)
         except ValueError:
             self.set_status(400)
-            self.write(json.dumps({"error": "Invalid seat_number format"}))
+            self.write(json.dumps({"error": "Invalid parameter format"}))
             return
 
         res = session.execute(select_movie_by_screening, (screening_id,))
@@ -248,8 +246,13 @@ async def main():
     await asyncio.Event().wait()
 
 
-if __name__ == "__main__":
+def entrypoint():
+    global session
     session = connect_to_cluster()
     session.set_keyspace("cinema")
 
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    entrypoint()

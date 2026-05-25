@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from cluster import connect_to_cluster
+from app.cluster import connect_to_cluster
 
 
 def setup():
