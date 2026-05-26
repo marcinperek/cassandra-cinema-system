@@ -42,7 +42,9 @@ Stress tests can be run with:
 uv run tests
 ```
 Stress Test 1: The client makes the same request very quickly.
+
 Stress Test 2: Three clients make the possible requests randomly.
+
 Stress Test 3: Two clients try to reserve all seats at the same time.
 
 ## Database schema
