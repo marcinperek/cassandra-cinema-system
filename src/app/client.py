@@ -63,28 +63,35 @@ def cmd_make_reservation(_args):
     user_name = input("Your name: ").strip()
     user_email = input("Your email: ").strip()
 
-    while True:
-        try:
-            seat_number = int(input("Seat number: "))
+    done = False
+    while not done:
+        seat_number = input("Seat number: ")
+        if seat_number.lower() == "q":
+            print("Exiting")
             break
+
+        try:
+            seat_number = int(seat_number)
         except ValueError:
             print("Invalid input, enter a number.")
+            continue
 
-    r = httpx.post(
-        BASE_URL,
-        params={
-            "user_email": user_email,
-            "user_name": user_name,
-            "screening_id": movie["screening_id"],
-            "seat_number": seat_number,
-        },
-    )
+        r = httpx.post(
+            BASE_URL,
+            params={
+                "user_email": user_email,
+                "user_name": user_name,
+                "screening_id": movie["screening_id"],
+                "seat_number": seat_number,
+            },
+        )
 
-    data = r.json()
-    if r.status_code == 200:
-        print("Reservation created successfully.")
-    else:
-        print(f"Error: {data.get('error', r.status_code)}")
+        data = r.json()
+        if r.status_code == 200:
+            print("Reservation created successfully.")
+            done = True
+        else:
+            print(f"Error: {data.get('error', r.status_code)}")
 
 
 def cmd_change_name(_args):

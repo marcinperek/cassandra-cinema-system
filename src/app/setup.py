@@ -1,3 +1,4 @@
+from time import sleep
 from uuid import uuid4
 
 from app.cluster import connect_to_cluster
@@ -11,6 +12,7 @@ def setup():
             "CREATE KEYSPACE IF NOT EXISTS cinema WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3}",
             timeout=20,
         )
+        sleep(3)
     except Exception as e:
         print(f"Error creating keyspace: {e}")
         exit(1)
